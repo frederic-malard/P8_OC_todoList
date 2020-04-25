@@ -1,7 +1,8 @@
-
 ###> symfony/framework-bundle ###
 .env
 /.env
+.env.test
+/.env.test
 /.env.local
 /.env.local.php
 /.env.*.local
@@ -19,3 +20,12 @@ vendor
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> friends-of-behat/symfony-extension ###
+/behat.yml
+###< friends-of-behat/symfony-extension ###

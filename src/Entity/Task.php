@@ -59,6 +59,8 @@ class Task
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+
+        return $this;
     }
 
     public function getTitle()
@@ -69,6 +71,8 @@ class Task
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
     }
 
     public function getContent()
@@ -79,6 +83,8 @@ class Task
     public function setContent($content)
     {
         $this->content = $content;
+
+        return $this;
     }
 
     public function isDone()
@@ -86,8 +92,20 @@ class Task
         return $this->isDone;
     }
 
-    public function toggle($flag)
+    public function setIsDone(bool $isDone): self
     {
-        $this->isDone = $flag;
+        $this->isDone = $isDone;
+
+        return $this;
+    }
+
+    // public function toggle($flag)
+    // {
+    //     $this->isDone = $flag;
+    // }
+
+    public function toggle(): void
+    {
+        $this->isDone = !$this->isDone;
     }
 }

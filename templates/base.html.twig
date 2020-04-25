@@ -38,13 +38,17 @@
         <!-- Page Content -->
         <div class="container">
             <div class="row">
-                <a href="{{ path('user_create') }}" class="btn btn-primary">
-                    Créer un utilisateur
-                </a>
-
                 {% if app.user %}
-                    <a href="{{ path('logout') }}" class="pull-right btn btn-danger">
+                    <a href="{{ path('app_logout') }}" class="pull-right btn btn-danger">
                         Se déconnecter
+                    </a>
+                {% else %}
+                    <a href="{{ path('user_create') }}" class="btn btn-primary">
+                        Créer un utilisateur
+                    </a>
+
+                    <a href="{{ path('app_login') }}" class="btn btn-primary">
+                        Connexion
                     </a>
                 {% endif %}
 
