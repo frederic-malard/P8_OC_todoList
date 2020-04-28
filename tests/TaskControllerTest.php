@@ -45,14 +45,14 @@ class TaskControllerTest extends WebTestCase
         );
 
         // $nbDivSuccess = $crawlerPost->filter('div.alert-success')->count();
-        // $nbPDansList = $crawlerPost->filter('p#dansList')->count();
-        // $nbPDansCreate = $crawlerPost->filter('p#dansCreate')->count();
+        $nbPDansList = $crawlerPost->filter('p#dansList')->count();
+        $nbPDansCreate = $crawlerPost->filter('p#dansCreate')->count();
 
         // $this->assertEquals($nbDivSuccess, 1);
-        // $this->assertEquals($nbPDansList, 1);
-        // $this->assertEquals($nbPDansCreate, 0);
+        $this->assertEquals($nbPDansList, 1);
+        $this->assertEquals($nbPDansCreate, 0);
 
-        $this->assertResponseRedirect('/tasks');
+        // $this->assertResponseRedirects('/tasks');
 
         // $clientGet = static::createClient(
         //     [],
