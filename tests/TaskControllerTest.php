@@ -34,23 +34,28 @@ class TaskControllerTest extends WebTestCase
         );
 
         // $clientGet = clone $clientPost;
+
+        $csrfToken = $clientPost->getContainer()->get('security.csrf.token_manager')->getToken('task'); // pas sur de la string dans getToken
         
         $crawlerPost = $clientPost->request(
             'POST',
             '/tasks/create',
             [
+                'csrf_token' => $csrfToken,
                 "content" => "première tache contenu",
                 "title" => "première tache titre"
             ]
         );
 
+        $this->assertResponseRedirects();
+
         // $nbDivSuccess = $crawlerPost->filter('div.alert-success')->count();
-        $nbPDansList = $crawlerPost->filter('p#dansList')->count();
-        $nbPDansCreate = $crawlerPost->filter('p#dansCreate')->count();
+        // $nbPDansList = $crawlerPost->filter('p#dansList')->count();
+        // $nbPDansCreate = $crawlerPost->filter('p#dansCreate')->count();
 
         // $this->assertEquals($nbDivSuccess, 1);
-        $this->assertEquals($nbPDansList, 1);
-        $this->assertEquals($nbPDansCreate, 0);
+        // $this->assertEquals($nbPDansList, 1);
+        // $this->assertEquals($nbPDansCreate, 0);
 
         // $this->assertResponseRedirects('/tasks');
 
@@ -68,9 +73,9 @@ class TaskControllerTest extends WebTestCase
 
         // $nbAlerts = $crawlerGet->filter('div.alert-warning')->count();
 
-        $nbAlerts = $crawlerPost->filter('div.alert-warning')->count();
+        // $nbAlerts = $crawlerPost->filter('div.alert-warning')->count();
 
-        $this->assertEquals($nbAlerts, 0);
+        // $this->assertEquals($nbAlerts, 0);
     }
 
     // public function testTaskSeenWhenCreated()
