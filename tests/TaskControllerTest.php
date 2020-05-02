@@ -2,36 +2,53 @@
 
 namespace App\Tests;
 
+use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TaskControllerTest extends WebTestCase
 {
-    private $client;
+    use FixturesTrait;
 
-    public function setUp(): void
+    // private $client;
+
+    // public function setUp(): void
+    // {
+    //     parent::setUp();
+
+    //     $this->client = static::createClient([], ['HTTPS' => true]);
+
+    //     /** @var EntityManagerInterface $em */
+    //     $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+    //     $purger = new ORMPurger($em);
+    //     $purger->purge();
+    // }
+
+    public function chargerFixture($nomFixture)
     {
-        parent::setUp();
-
-        $this->client = static::createClient([], ['HTTPS' => true]);
-
-        /** @var EntityManagerInterface $em */
-        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-
-        $purger = new ORMPurger($em);
-        $purger->purge();
+        self::bootKernel();
+        $this->loadFixtueFiles([
+            __DIR__ . '/' . $nomFixture . 'Fixtures.yaml'
+        ]);
     }
 
     public function testTasksListResponse()
     {
-        $crawler = $this->client->request('GET', '/tasks');
+        $client = static::createClient([], ['HTTPS' => true]);
+
+        $crawler = $client->request('GET', '/tasks');
 
         $this->assertResponseIsSuccessful();
     }
 
     public function testNoTaskWhenStart()
     {
-        $crawler = $this->client->request('GET', '/tasks');
+        $this->chargerFixture("TaskControllerTest");
+
+        $client = static::createClient([], ['HTTPS' => true]);
+        
+        $crawler = $client->request('GET', '/tasks');
 
         $nbElements = $crawler->filter('div.alert-warning')->count();
 
@@ -40,16 +57,18 @@ class TaskControllerTest extends WebTestCase
 
     public function testTaskSeenWhenCreated()
     {
-        $crawler = $this->client->request('GET', '/tasks/create');
+        $client = static::createClient([], ['HTTPS' => true]);
+        
+        $crawler = $client->request('GET', '/tasks/create');
 
         $form = $crawler->selectButton('Ajouter')->form([
             'task[title]' => 'titre première tache',
             'task[content]' => 'contenu première tache'
         ]);
 
-        $this->client->submit($form);
+        $client->submit($form);
 
-        $this->client->followRedirect();
+        $client->followRedirect();
 
         //assertredirect
 
