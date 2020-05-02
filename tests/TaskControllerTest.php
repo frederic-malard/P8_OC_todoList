@@ -51,9 +51,8 @@ class TaskControllerTest extends WebTestCase
 
         $this->client->followRedirect();
 
-        //assertredirect
-
-        $this->assertSelectorExists('p#dansListe');
+        $this->assertSelectorTextContains('h4 a', 'titre première tache');
+        $this->assertSelectorTextContains('h4+p', 'contenu première tache');
     }
 
     //     // $nbDivSuccess = $crawlerPost->filter('div.alert-success')->count();
