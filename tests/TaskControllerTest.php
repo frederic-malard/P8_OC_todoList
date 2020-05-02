@@ -2,11 +2,17 @@
 
 namespace App\Tests;
 
+use App\Entity\Task;
+use App\Repository\TaskRepository;
+use App\DataFixtures\TaskTestEditFixtures;
+use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TaskControllerTest extends WebTestCase
 {
+    use FixturesTrait;
+
     private $client;
 
     public function setUp(): void
@@ -55,6 +61,30 @@ class TaskControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h4+p', 'contenu première tache');
     }
 
-    //     // $nbDivSuccess = $crawlerPost->filter('div.alert-success')->count();
+    public function testTaskEdit()
+    {
+        self::bootKernel();
+
+        $this->loadFixtures([TaskTestEditFixtures::class]);
+
+        $repository = self::$container->get(TaskRepository::class);
+        $task = $repository->findOneByTitle("viaFixtures");
+        $id = $task->getId();
+
+        $crawler = $this->client->request('GET', '/tasks/' . $id . '/edit');
+
+        $form = $crawler->selectButton('Modifier')->form([
+            'task[title]' => 'titre modifié',
+            'task[content]' => 'contenu modifié'
+        ]);
+
+
+        $this->client->submit($form);
+
+        $this->client->followRedirect();
+
+        $this->assertSelectorTextContains('h4 a', 'titre modifié');
+        $this->assertSelectorTextContains('h4+p', 'contenu modifié');
+    }
     
 }
