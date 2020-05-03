@@ -153,5 +153,4 @@ class TaskControllerTest extends WebTestCase
 
         $this->assertEquals(0, $nbTaskElt);
     }
-    
 }
