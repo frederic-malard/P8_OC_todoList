@@ -28,6 +28,13 @@ class TaskControllerTest extends WebTestCase
         $purger->purge();
     }
 
+    private function initializeFixture()
+    {
+        self::bootKernel();
+
+        $this->loadFixtures([TaskTestEditFixtures::class]);
+    }
+
     public function testTasksListResponse()
     {
         $crawler = $this->client->request('GET', '/tasks');
@@ -63,9 +70,7 @@ class TaskControllerTest extends WebTestCase
 
     public function testTaskEdit()
     {
-        self::bootKernel();
-
-        $this->loadFixtures([TaskTestEditFixtures::class]);
+        $this->initializeFixture();
 
         $repository = self::$container->get(TaskRepository::class);
         $task = $repository->findOneByTitle("viaFixtures");
@@ -89,9 +94,7 @@ class TaskControllerTest extends WebTestCase
 
     public function testTaskToggle()
     {
-        self::bootKernel();
-
-        $this->loadFixtures([TaskTestEditFixtures::class]);
+        $this->initializeFixture();
 
         $repository = self::$container->get(TaskRepository::class);
         $task = $repository->findOneByTitle("viaFixtures");
@@ -112,9 +115,11 @@ class TaskControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Marquer comme faite')->form();
         $this->client->submit($form);
-        $this->client->followRedirect();
+        $crawler = $this->client->followRedirect();
 
-        $task = $repository->findOneById($id);
+        $manager = self::$container->get("doctrine.orm.entity_manager");
+        $manager->refresh($task);
+
         $isDoneAfterToggle = $task->isDone();
 
         $this->assertNotEquals($isDoneBeforeToggle, $isDoneAfterToggle);
@@ -124,15 +129,29 @@ class TaskControllerTest extends WebTestCase
         $nbBtnDo = $crawler->selectButton('Marquer comme faite')->count();
         $nbBtnUndo = $crawler->selectButton('Marquer non terminée')->count();
 
-        $this->assertEquals($nbNotDone, 0);
-        $this->assertEquals($nbDone, 1);
-        $this->assertEquals($nbBtnDo, 0);
-        $this->assertEquals($nbBtnUndo, 1);
+        $this->assertEquals(0, $nbNotDone);
+        $this->assertEquals(1, $nbDone);
+        $this->assertEquals(0, $nbBtnDo);
+        $this->assertEquals(1, $nbBtnUndo);
     }
 
-    // public function testTaskDelete()
-    // {
+    public function testTaskDelete()
+    {
+        $this->initializeFixture();
+        
+        $crawler = $this->client->request('GET', '/tasks');
 
-    // }
+        $nbTaskElt = $crawler->filter('div.thumbnail')->count();
+
+        $this->assertEquals($nbTaskElt, 1);
+
+        $form = $crawler->selectButton('Supprimer')->form();
+        $this->client->submit($form);
+        $crawler = $this->client->followRedirect();
+
+        $nbTaskElt = $crawler->filter('div.thumbnail')->count();
+
+        $this->assertEquals(0, $nbTaskElt);
+    }
     
 }
