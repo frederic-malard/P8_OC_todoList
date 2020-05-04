@@ -36,7 +36,7 @@ class UserControllerTest extends WebTestCase
         $this->loadFixtures([UserTestEditFixtures::class]);
     }
 
-    public function testUsersListResponse()
+    public function testUsersEditResponse()
     {
         $crawler = $this->client->request('GET', '/users');
 
@@ -74,59 +74,53 @@ class UserControllerTest extends WebTestCase
         $this->assertEquals(1, $nbUsers);
     }
 
-    // public function testUserEdit()
-    // {
+    public function testUserEdit()
+    {
         
-    //     $this->initializeFixture();
+        $this->initializeFixture();
         
-    //     $repository = self::$container->get(UserRepository::class);
-    //     $user = $repository->findAll()[0];
-    //     $id = $user->getId();
+        $repository = self::$container->get(UserRepository::class);
+        $user = $repository->findAll()[0];
+        $id = $user->getId();
 
-    //     $crawler = $this->client->request('GET', '/users/' . $id . '/edit');
+        $crawler = $this->client->request('GET', '/users/' . $id . '/edit');
 
-    //     $form = $crawler->selectButton('Modifier')->form([
-    //         'user[username]' => 'nouveauNom',
-    //         'user[password][first]' => 'nouveauMdp',
-    //         'user[password][second]' => 'nouveauMdp',
-    //         'user[email]' => 'nouvel@email.fr'
-    //     ]);
+        $form = $crawler->selectButton('Modifier')->form([
+            'user[username]' => 'nouveauNom',
+            'user[password][first]' => 'nouveauMdp',
+            'user[password][second]' => 'nouveauMdp',
+            'user[email]' => 'nouvel@email.fr'
+        ]);
 
-    //     $this->client->submit($form);
-    //     // $crawler = $this->client->followRedirect();
+        $response = $this->client->submit($form);
 
-    //     $manager = self::$container->get("doctrine.orm.entity_manager");
-    //     $manager->refresh($user);
+        $manager = self::$container->get("doctrine.orm.entity_manager");
+        $manager->refresh($user);
 
-    //     $this->assertEquals('nouveauNom', $user->getUsername());
-    //     $this->assertEquals('nouveauMdp', $user->getPassword());
-    //     $this->assertEquals('nouvel@email.fr', $user->getEmail());
-    // }
+        $this->assertEquals('nouveauNom', $user->getUsername());
+        $this->assertEquals('nouvel@email.fr', $user->getEmail());
+    }
 
     // ajouter test refus différence mdp1 et mdp2
-    // public function testCreateRefuseDifferentPasswords()
-    // {
-    //     $repository = self::$container->get(UserRepository::class);
+    public function testCreateRefuseDifferentPasswords()
+    {
+        $repository = self::$container->get(UserRepository::class);
 
-    //     $crawler = $this->client->request('GET', '/users/create');
+        $crawler = $this->client->request('GET', '/users/create');
 
-    //     $form = $crawler->selectButton('Ajouter')->form([
-    //         'user[username]' => 'nom',
-    //         'user[password][first]' => 'motDePasse',
-    //         'user[password][second]' => 'autreMotDePasse',
-    //         'user[email]' => 'email@mail.fr'
-    //     ]);
+        $form = $crawler->selectButton('Ajouter')->form([
+            'user[username]' => 'nom',
+            'user[password][first]' => 'motDePasse',
+            'user[password][second]' => 'autreMotDePasse',
+            'user[email]' => 'email@mail.fr'
+        ]);
 
-    //     $this->expectException(AuthenticationException::class);
+        $this->client->submit($form);
 
-    //     $this->client->submit($form);
+        $nbUsers = count($repository->findAll());
 
-    //     $this->client->followRedirect();
-
-    //     $nbUsers = count($repository->findAll());
-
-    //     $this->assertEquals(1, $nbUsers);
-    // }
+        $this->assertEquals(0, $nbUsers);
+    }
 
     // public function testEditRefuseDifferentPasswords()
     // {
