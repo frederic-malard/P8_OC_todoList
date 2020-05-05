@@ -53,7 +53,7 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/{id}/edit", name="task_edit")
-     * @IsGranted("ROLE_USER")
+     * @Security("is_granted('ROLE_USER') and user == task.getUser()", message="Cette tâche ne vous appartient pas, vous ne pouvez pas la modifier.")
      */
     public function editAction(Task $task, Request $request)
     {
@@ -61,7 +61,7 @@ class TaskController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && $task->getUser() == $this->getUser()) {
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'La tâche a bien été modifiée.');
@@ -77,7 +77,7 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/{id}/toggle", name="task_toggle")
-     * @IsGranted("ROLE_USER")
+     * @Security("is_granted('ROLE_USER') and user == task.getUser()", message="Cette tâche ne vous appartient pas, vous ne pouvez pas la modifier.")
      */
     public function toggleTaskAction(Task $task)
     {

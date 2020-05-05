@@ -4,7 +4,9 @@ namespace App\Tests;
 
 use App\Entity\Task;
 use App\Repository\TaskRepository;
+use App\Repository\UserRepository;
 use App\DataFixtures\TaskTestEditFixtures;
+use App\DataFixtures\UserTestEditFixtures;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -26,17 +28,42 @@ class TaskControllerTest extends WebTestCase
 
         $purger = new ORMPurger($em);
         $purger->purge();
+
+        self::bootKernel();
     }
 
-    private function initializeFixture()
+    private function login()
     {
-        self::bootKernel();
+        $repository = self::$container->get(UserRepository::class);
 
-        $this->loadFixtures([TaskTestEditFixtures::class]);
+        $crawler = $this->client->request('GET', '/login');
+
+        $form = $crawler->selectButton('Sign in')->form([
+            'username' => 'nom',
+            'password' => 'unMotDePasse'
+        ]);
+
+        $this->client->submit($form);
+        $this->client->followRedirect();
+    }
+
+    private function loadFixturesInterne(bool $useTask = false)
+    {
+        if($useTask)
+        {
+            $this->loadFixtures([TaskTestEditFixtures::class]);
+        }
+        else
+        {
+            $this->loadFixtures([UserTestEditFixtures::class]);
+        }
     }
 
     public function testTasksListResponse()
     {
+        $this->loadFixturesInterne();
+        $this->login();
+
         $crawler = $this->client->request('GET', '/tasks');
 
         $this->assertResponseIsSuccessful();
@@ -44,6 +71,9 @@ class TaskControllerTest extends WebTestCase
 
     public function testNoTaskWhenStart()
     {
+        $this->loadFixturesInterne();
+        $this->login();
+
         $crawler = $this->client->request('GET', '/tasks');
 
         $nbElements = $crawler->filter('div.alert-warning')->count();
@@ -53,6 +83,9 @@ class TaskControllerTest extends WebTestCase
 
     public function testTaskSeenWhenCreated()
     {
+        $this->loadFixturesInterne();
+        $this->login();
+
         $crawler = $this->client->request('GET', '/tasks/create');
 
         $form = $crawler->selectButton('Ajouter')->form([
@@ -70,7 +103,8 @@ class TaskControllerTest extends WebTestCase
 
     public function testTaskEdit()
     {
-        $this->initializeFixture();
+        $this->loadFixturesInterne(true);
+        $this->login();
 
         $repository = self::$container->get(TaskRepository::class);
         $task = $repository->findOneByTitle("viaFixtures");
@@ -94,7 +128,8 @@ class TaskControllerTest extends WebTestCase
 
     public function testTaskToggle()
     {
-        $this->initializeFixture();
+        $this->loadFixturesInterne(true);
+        $this->login();
 
         $repository = self::$container->get(TaskRepository::class);
         $task = $repository->findOneByTitle("viaFixtures");
@@ -137,8 +172,9 @@ class TaskControllerTest extends WebTestCase
 
     public function testTaskDelete()
     {
-        $this->initializeFixture();
-        
+        $this->loadFixturesInterne(true);
+        $this->login();
+
         $crawler = $this->client->request('GET', '/tasks');
 
         $nbTaskElt = $crawler->filter('div.thumbnail')->count();
@@ -154,8 +190,8 @@ class TaskControllerTest extends WebTestCase
         $this->assertEquals(0, $nbTaskElt);
     }
 
-    public function testCurrentUserAddedToCreatedTask()
-    {
+    // public function testCurrentUserAddedToCreatedTask()
+    // {
 
-    }
+    // }
 }
