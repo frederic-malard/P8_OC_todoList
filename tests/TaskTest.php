@@ -94,4 +94,14 @@ class TaskTest extends KernelTestCase
 
         $this->assertCount(0, $errors);
     }
+
+    public function testRefuseToChangeUserOfExistingTask()
+    {
+
+    }
+
+    public function testAllTasksHaveUser()
+    {
+        
+    }
 }
