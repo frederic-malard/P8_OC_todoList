@@ -5,6 +5,7 @@ namespace App\Tests;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\DataFixtures\UserTestEditFixtures;
+use App\DataFixtures\UserTestAdminFixtures;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -27,30 +28,43 @@ class UserControllerTest extends WebTestCase
 
         $purger = new ORMPurger($em);
         $purger->purge();
+
+        self::bootKernel();
     }
 
-    private function initializeFixture()
+    private function login()
     {
-        self::bootKernel();
+        $repository = self::$container->get(UserRepository::class);
 
-        $this->loadFixtures([UserTestEditFixtures::class]);
+        $crawler = $this->client->request('GET', '/login');
+
+        $form = $crawler->selectButton('Sign in')->form([
+            'username' => 'admin',
+            'password' => 'unMotDePasse'
+        ]);
+
+        $this->client->submit($form);
+        $this->client->followRedirect();
     }
 
     public function testUsersEditResponse()
     {
+        $this->loadFixtures([UserTestAdminFixtures::class]);
+        $this->login();
+
         $crawler = $this->client->request('GET', '/users');
 
         $this->assertResponseIsSuccessful();
     }
 
-    public function testNoUserWhenStart()
-    {
-        $crawler = $this->client->request('GET', '/users');
+    // public function testNoUserWhenStart()
+    // {
+    //     $crawler = $this->client->request('GET', '/users');
 
-        $nbElements = $crawler->filter('.btn-succes')->count();
+    //     $nbElements = $crawler->filter('.btn-succes')->count();
 
-        $this->assertEquals($nbElements, 0);
-    }
+    //     $this->assertEquals($nbElements, 0);
+    // }
 
     public function testUserSeenWhenCreated()
     {
@@ -76,15 +90,16 @@ class UserControllerTest extends WebTestCase
 
     public function testUserEdit()
     {
-        
-        $this->initializeFixture();
+        $this->loadFixtures([UserTestAdminFixtures::class]);
         
         $repository = self::$container->get(UserRepository::class);
-        $user = $repository->findAll()[0];
+        $user = $repository->findOneByUsername("nom");
         $id = $user->getId();
+        
+        $this->login();
 
         $crawler = $this->client->request('GET', '/users/' . $id . '/edit');
-
+        
         $form = $crawler->selectButton('Modifier')->form([
             'user[username]' => 'nouveauNom',
             'user[password][first]' => 'nouveauMdp',

@@ -117,7 +117,6 @@ class TaskControllerTest extends WebTestCase
             'task[content]' => 'contenu modifié'
         ]);
 
-
         $this->client->submit($form);
 
         $this->client->followRedirect();
