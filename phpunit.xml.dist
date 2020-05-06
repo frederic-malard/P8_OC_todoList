@@ -26,6 +26,9 @@
                 <directory>
                     ./src/Migrations
                 </directory>
+                <directory>
+                    ./src/Kernel.php
+                </directory>
             </exclude>
         </whitelist>
     </filter>

@@ -57,15 +57,6 @@ class UserControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    // public function testNoUserWhenStart()
-    // {
-    //     $crawler = $this->client->request('GET', '/users');
-
-    //     $nbElements = $crawler->filter('.btn-succes')->count();
-
-    //     $this->assertEquals($nbElements, 0);
-    // }
-
     public function testUserSeenWhenCreated()
     {
         $repository = self::$container->get(UserRepository::class);
