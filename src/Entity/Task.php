@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
  * @ORM\Table
  */
 class Task
@@ -42,6 +43,7 @@ class Task
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tasks")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
@@ -97,12 +99,12 @@ class Task
         return $this->isDone;
     }
 
-    // public function setIsDone(bool $isDone): self
-    // {
-    //     $this->isDone = $isDone;
+    public function setIsDone(bool $isDone): self
+    {
+        $this->isDone = $isDone;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     // public function toggle($flag)
     // {
@@ -114,12 +116,12 @@ class Task
         $this->isDone = !$this->isDone;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 

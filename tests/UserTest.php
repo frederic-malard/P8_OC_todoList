@@ -118,6 +118,4 @@ class UserTest extends KernelTestCase
 
         $this->assertNotEquals(0, $nbErrors);
     }
-
-    // no test for normal email : already tested testAcceptDifferentUsername
 }

@@ -84,7 +84,6 @@ class TaskController extends AbstractController
         $task->toggle();
 
         $manager = $this->getDoctrine()->getManager();
-        $manager->persist($task);
         $manager->flush();
 
         $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));

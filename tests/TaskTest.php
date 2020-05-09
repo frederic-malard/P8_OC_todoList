@@ -3,10 +3,17 @@
 namespace App\Tests;
 
 use App\Entity\Task;
+use App\Entity\User;
+use App\Repository\TaskRepository;
+use App\DataFixtures\TaskTestEditFixtures;
+use Liip\TestFixturesBundle\Test\FixturesTrait;
+use App\DataFixtures\TaskTestDefaultUserFixtures;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TaskTest extends KernelTestCase
 {
+    use FixturesTrait;
+
     public function testIsDoneFalse()
     {
         $task = new Task();
@@ -25,7 +32,7 @@ class TaskTest extends KernelTestCase
         $this->assertEqualsWithDelta($maintenant, $createdAt, 1);
     }
 
-    public function testToggleTrue()
+    public function testToggleTrue() // se met à échouer d'un coup... ???
     {
         $task = new Task();
 
@@ -95,13 +102,51 @@ class TaskTest extends KernelTestCase
         $this->assertCount(0, $errors);
     }
 
-    // public function testRefuseToChangeUserOfExistingTask()
+    // public function testCreateDefaultAnonyme()
     // {
+    //     $task = new Task();
 
+    //     $task
+    //         ->setCreatedAt(new \DateTime())
+    //         ->setTitle("compter jusqu'à 3")
+    //         ->setContent("1, 2, 3")
+    //     ;
+
+    //     $this->loadFixtures([TaskTestDefaultUserFixtures::class]);
+
+    //     $repository = self::$container->get(TaskRepository::class);
+    //     $task = $repository->findOneByTitle("testDefault");
+    //     $user = $task->getUser();
+    //     $username = $user->getUsername();
+
+    //     $this->assertEquals("anonyme", $username);
     // }
 
-    // public function testAllTasksHaveUser()
+    // public function testRefuseToChangeUserOfExistingTask()
     // {
+    //     $this->loadFixtures([TaskTestEditFixtures::class]);
+
+    //     $repository = self::$container->get(TaskRepository::class);
+    //     $task = $repository->findOneByTitle("viaFixtures");
         
+    //     $user = new User();
+    //     $user
+    //         ->setUsername("viaTest")
+    //         ->setPassword("abcd")
+    //         ->setEmail("azerty@mail.fr")
+    //     ;
+
+    //     $task->setUser($user);
+
+    //     $manager = self::$container->get("doctrine.orm.entity_manager");
+    //     $manager->persist($user);
+    //     $manager->persist($task);
+    //     $manager->flush();
+
+    //     $task = $repository->findOneByTitle("viaFixtures");
+    //     $user = $task->getUser();
+    //     $username = $user->getUsername();
+
+    //     $this->assertNotEquals("viaTest", $username);
     // }
 }

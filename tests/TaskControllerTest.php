@@ -149,12 +149,14 @@ class TaskControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Marquer comme faite')->form();
         $this->client->submit($form);
+
         $crawler = $this->client->followRedirect();
 
         $manager = self::$container->get("doctrine.orm.entity_manager");
         $manager->refresh($task);
 
         $isDoneAfterToggle = $task->isDone();
+
 
         $this->assertNotEquals($isDoneBeforeToggle, $isDoneAfterToggle);
 
@@ -189,8 +191,27 @@ class TaskControllerTest extends WebTestCase
         $this->assertEquals(0, $nbTaskElt);
     }
 
-    // public function testCurrentUserAddedToCreatedTask()
-    // {
+    public function testCurrentUserAddedToCreatedTask()
+    {
+        $this->loadFixturesInterne();
+        $this->login();
 
-    // }
+        $crawler = $this->client->request('GET', '/tasks/create');
+
+        $form = $crawler->selectButton('Ajouter')->form([
+            'task[title]' => 'un certain titre',
+            'task[content]' => 'contenu'
+        ]);
+
+        $this->client->submit($form);
+
+        $this->client->followRedirect();
+
+        $repository = self::$container->get(TaskRepository::class);
+        $task = $repository->findOneByTitle("un certain titre");
+        $user = $task->getUser();
+        $username = $user->getUsername();
+
+        $this->assertEquals('nom', $username);
+    }
 }

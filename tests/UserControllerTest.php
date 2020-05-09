@@ -128,10 +128,33 @@ class UserControllerTest extends WebTestCase
         $this->assertEquals(0, $nbUsers);
     }
 
-    // public function testEditRefuseDifferentPasswords()
-    // {
+    public function testEditRefuseDifferentPasswords()
+    {
+        $this->loadFixtures([UserTestAdminFixtures::class]);
+        
+        $repository = self::$container->get(UserRepository::class);
+        $user = $repository->findOneByUsername("nom");
+        $id = $user->getId();
+        
+        $this->login();
 
-    // }
+        $crawler = $this->client->request('GET', '/users/' . $id . '/edit');
+        
+        $form = $crawler->selectButton('Modifier')->form([
+            'user[username]' => 'nouveauNom',
+            'user[password][first]' => 'nouveauMdp',
+            'user[password][second]' => 'mauvaisMdp',
+            'user[email]' => 'nouvel@email.fr'
+        ]);
 
-    // ajouter tests validateurs, email etc, cf grafikart
+        $response = $this->client->submit($form);
+
+        $manager = self::$container->get("doctrine.orm.entity_manager");
+        $manager->refresh($user);
+
+        $repository = self::$container->get(UserRepository::class);
+        $user = $repository->findOneByUsername("nouveauNom");
+
+        $this->assertEquals(null, $user);
+    }
 }
