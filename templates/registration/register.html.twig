@@ -1,15 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block header_title %}Inscription{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+    <h1>Inscription</h1>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.plainPassword) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+    {{ form_start(form, {'action' : path('register')}) }}
+        {{ form_widget(form) }}
 
-        <button class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+        <button type="submit" class="btn btn-success pull-right">Ajouter</button>
+    {{ form_end(form) }}
 {% endblock %}

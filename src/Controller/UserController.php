@@ -22,6 +22,36 @@ class UserController extends AbstractController
     }
 
     /**
+     * @Route("/users/create", name="user_create")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function createAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
+            );
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', "L'utilisateur a bien été créé");
+
+            return $this->redirectToRoute('user_list');
+        }
+
+        return $this->render('user/create.html.twig', ['form' => $form->createView(), 'user' => $user]);
+    }
+
+    /**
      * @Route("/users/{id}/edit", name="user_edit")
      * @IsGranted("ROLE_ADMIN")
      */

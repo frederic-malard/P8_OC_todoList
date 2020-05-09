@@ -47,7 +47,7 @@ class UserControllerTest extends WebTestCase
         $this->client->followRedirect();
     }
 
-    public function testUsersEditResponse()
+    public function testUsersListResponse()
     {
         $this->loadFixtures([UserTestAdminFixtures::class]);
         $this->login();
@@ -55,28 +55,6 @@ class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/users');
 
         $this->assertResponseIsSuccessful();
-    }
-
-    public function testUserSeenWhenCreated()
-    {
-        $repository = self::$container->get(UserRepository::class);
-
-        $crawler = $this->client->request('GET', '/users/create');
-
-        $form = $crawler->selectButton('Ajouter')->form([
-            'user[username]' => 'nom',
-            'user[password][first]' => 'motDePasse',
-            'user[password][second]' => 'motDePasse',
-            'user[email]' => 'email@mail.fr'
-        ]);
-
-        $this->client->submit($form);
-
-        $this->client->followRedirect();
-
-        $nbUsers = count($repository->findAll());
-
-        $this->assertEquals(1, $nbUsers);
     }
 
     public function testUserEdit()
@@ -105,27 +83,6 @@ class UserControllerTest extends WebTestCase
 
         $this->assertEquals('nouveauNom', $user->getUsername());
         $this->assertEquals('nouvel@email.fr', $user->getEmail());
-    }
-
-    // ajouter test refus différence mdp1 et mdp2
-    public function testCreateRefuseDifferentPasswords()
-    {
-        $repository = self::$container->get(UserRepository::class);
-
-        $crawler = $this->client->request('GET', '/users/create');
-
-        $form = $crawler->selectButton('Ajouter')->form([
-            'user[username]' => 'nom',
-            'user[password][first]' => 'motDePasse',
-            'user[password][second]' => 'autreMotDePasse',
-            'user[email]' => 'email@mail.fr'
-        ]);
-
-        $this->client->submit($form);
-
-        $nbUsers = count($repository->findAll());
-
-        $this->assertEquals(0, $nbUsers);
     }
 
     public function testEditRefuseDifferentPasswords()

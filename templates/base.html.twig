@@ -43,7 +43,7 @@
                         Se déconnecter
                     </a>
                 {% else %}
-                    <a href="{{ path('user_create') }}" class="btn btn-primary">
+                    <a href="{{ path('register') }}" class="btn btn-primary">
                         Créer un utilisateur
                     </a>
 
@@ -71,7 +71,9 @@
                         </div>
                     {% endfor %}
 
-                    {% block header_title %}{% endblock %}
+                    <h1 class="my-5">
+                        {% block header_title %}{% endblock %}
+                    </h1>
                     {% block header_img %}<img class="slide-image" src="{{ asset('img/todolist_homepage.jpg') }}" alt="todo list">{% endblock %}
                 </div>
             </div>
