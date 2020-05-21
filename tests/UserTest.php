@@ -70,13 +70,15 @@ class UserTest extends KernelTestCase
 
         $user
             ->setUsername("nomDifferent")
-            ->setEmail("e@mail.fr")
-            ->setPassword("unMotDePasse")
+            ->setEmail("ee@mail.fr")
+            ->setPassword("unMotDePasse6")
         ;
 
         self::bootKernel();
 
         $errors = self::$container->get('validator')->validate($user);
+
+        var_dump($errors);
 
         $this->assertCount(0, $errors);
     }
