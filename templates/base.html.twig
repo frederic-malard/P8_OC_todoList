@@ -28,8 +28,9 @@
         <nav class="navbar navbar-light navbar-fixed-top" style="background-color: #e3f2fd;" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">To Do List app</a>
-
+                    <a class="navbar-brand" href="{{ path('homepage') }}">
+                        To Do List app
+                    </a>
                     <img src="{{ asset('img/Logo_OpenClassrooms.png') }}" alt="OpenClassrooms" />
                 </div>
             </div>
@@ -39,6 +40,14 @@
         <div class="container">
             <div class="row">
                 {% if app.user %}
+                    {% if "ROLE_ADMIN" in app.user.roles %}
+                        <a href="{{ path('user_list') }}" class="btn btn-primary">
+                            liste des utilisateurs
+                        </a>
+                        <a href="{{ path('user_create') }}" class="btn btn-success">
+                            créer un utilisateur
+                        </a>
+                    {% endif %}
                     <a href="{{ path('app_logout') }}" class="pull-right btn btn-danger">
                         Se déconnecter
                     </a>
