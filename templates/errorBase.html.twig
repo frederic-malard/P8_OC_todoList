@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    
+    <div class="container">
+        <p class="text-danger h2 my-5">
+
+            {% block message %}
+                Erreur 404 : page introuvable !
+            {% endblock %}
+
+        </p>
+        <p>
+            <a href="{{ path('homepage') }}" class="btn btn-primary">
+                Retour à l'accueil
+            </a>
+        </p>
+    </div>
+
+{% endblock %}
