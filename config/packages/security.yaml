@@ -12,11 +12,11 @@ security:
                 property: username
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            pattern: ^/(_(profiler|wdt)|css|images|js)/ #regex url
             security: false
         main:
-            anonymous: lazy
-            provider: app_user_provider
+            anonymous: lazy # où qu'on soit ça match (regarde si l'URL match avec le pattern, mais le main y'a pas de patterne donc match peu importe où on est sur le site)
+            provider: app_user_provider # ce qui est défini ci dessus
             guard:
                 authenticators:
                     - App\Security\UserAuthenticator
@@ -29,7 +29,7 @@ security:
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
             # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+            # switch_user: true # permet en mode dev de se faire passer pour un autre user en mettant son mail par ex
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

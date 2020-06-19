@@ -78,8 +78,6 @@ class UserTest extends KernelTestCase
 
         $errors = self::$container->get('validator')->validate($user);
 
-        var_dump($errors);
-
         $this->assertCount(0, $errors);
     }
 

@@ -20,8 +20,8 @@ use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticato
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class UserAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
-{
+class UserAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface // classe exécutée chaque fois qu'on match dans le firewall de security yaml, choisit dans guard authen... Pourrait ajouter un auth pour s'auth avec google, mais y'a des bundles qui permettent de le faire simplement
+{ // fonctions exécutées dans l'ordre
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
@@ -39,10 +39,10 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function supports(Request $request)
+    public function supports(Request $request) // première fonction lancée par le firewall
     {
         return self::LOGIN_ROUTE === $request->attributes->get('_route')
-            && $request->isMethod('POST');
+            && $request->isMethod('POST'); // check qu'on est sur route login. Support est appelé tout le temps, puis renvoie booléen qui dit si doit gérer l'auth, true quand soumet form d'auth
     }
 
     public function getCredentials(Request $request)
@@ -50,7 +50,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
         $credentials = [
             'username' => $request->request->get('username'),
             'password' => $request->request->get('password'),
-            'csrf_token' => $request->request->get('_csrf_token'),
+            'csrf_token' => $request->request->get('_csrf_token'), // csrf : nombre aléatoire généré quand génère page web, a durée de validité genre 5-10 min, si soumet form après ce temps, form est plus valide. Note : éviter mettre à false en cas de probs car pas sécuritaire
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
@@ -60,7 +60,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
         return $credentials;
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser($credentials, UserProviderInterface $userProvider) // userprovider définit dasn security yaml dans providers
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {

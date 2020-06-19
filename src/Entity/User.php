@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @UniqueEntity(fields={"username"}, message="Ce login est déjà pris.")
  * @UniqueEntity(fields={"email"}, message="Cet email est déjà pris.")
  */
-class User implements UserInterface
+class User implements UserInterface // l'implements permet d'utiliser une entité en provider
 {
     const ROLE_USER = 'ROLE_USER';
     const ROLE_ADMIN = 'ROLE_ADMIN';
