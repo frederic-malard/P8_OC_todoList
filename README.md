@@ -22,4 +22,10 @@ Pour installer le projet, pour créer une copie personnelle chez soit, suivez le
 Il vous reste encore à compléter le projet avec des dossiers habituels faciles à récupérer ou des fichiers sensibles.
 
 * récupérez ce qu'il faut en ligne de commande : composer install
-* modifiez le fichier .env.aModifier, notament la ligne DATABASE_URL en fin de fichier, en la renseignant avec les données adéquates.
+* modifiez le fichier .env.aModifier, notament la ligne DATABASE_URL en fin de fichier, en la renseignant avec les données adéquates
+* (ligne de commande) php bin/console doctrine:database:create
+* (ligne de commande) php bin/console doctrine:migrations:migrate
+
+
+
+(migrations, créations BDD)
